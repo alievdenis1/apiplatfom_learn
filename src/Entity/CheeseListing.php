@@ -4,6 +4,7 @@
     use Carbon\Carbon;
     use Doctrine\ORM\Mapping as ORM;
     use Symfony\Component\Serializer\Annotation\Groups;
+
     /**
      * @ApiResource(
      *     collectionOperations={"get", "post"},
@@ -12,7 +13,8 @@
      *          "put"
      *     },
      *     shortName="cheeses",
-     *     normalizationContext={"groups"={"cheese_listing:read"}}
+     *     normalizationContext={"groups"={"cheese_listing:read"}},
+     *     denormalizationContext={"groups"={"cheese_listing:write"}}
      * )
      * @ORM\Entity(repositoryClass="App\Repository\CheeseListingRepository")
      */
@@ -26,7 +28,7 @@
         private $id;
         /**
          * @ORM\Column(type="string", length=255)
-         * @Groups({"cheese_listing:read"})
+         * @Groups({"cheese_listing:read", "cheese_listing:write"})
          */
         private $title;
         /**
@@ -38,7 +40,7 @@
          * The price of this delicious cheese, in cents
          *
          * @ORM\Column(type="integer")
-         * @Groups({"cheese_listing:read"})
+         * @Groups({"cheese_listing:read", "cheese_listing:write"})
          */
         private $price;
         /**
