@@ -4,6 +4,8 @@
     use ApiPlatform\Core\Annotation\ApiResource;
     use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
     use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+    use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+    use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
     use Carbon\Carbon;
     use Doctrine\ORM\Mapping as ORM;
     use Symfony\Component\Serializer\Annotation\Groups;
@@ -19,9 +21,14 @@
      *     shortName="cheeses",
      *     normalizationContext={"groups"={"cheese_listing:read", "swagger_definition_name"="Read"}},
      *     denormalizationContext={"groups"={"cheese_listing:write", "swagger_definition_name"="Write"}}
+     *     attributes={
+     *          "pagination_items_per_page"=10
+     *     }
      * )
      * @ApiFilter(BooleanFilter::class, properties={"isPublished"})
      * @ApiFilter(SearchFilter::class, properties={"title": "partial"})
+     * @ApiFilter(RangeFilter::class, properties={"price"})
+     * @ApiFilter(PropertyFilter::class)
      * @ORM\Entity(repositoryClass="App\Repository\CheeseListingRepository")
      */
     class CheeseListing
@@ -73,6 +80,16 @@
         public function getDescription(): ?string
         {
             return $this->description;
+        }
+        /**
+         * @Groups("cheese_listing:read")
+         */
+        public function getShortDescription(): ?string
+        {
+            if (strlen($this->description) < 40) {
+                return $this->description;
+            }
+            return substr($this->description, 0, 40).'...';
         }
         public function setDescription(string $description): self
         {
