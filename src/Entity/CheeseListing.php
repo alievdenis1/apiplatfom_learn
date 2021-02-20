@@ -10,6 +10,7 @@
     use Doctrine\ORM\Mapping as ORM;
     use Symfony\Component\Serializer\Annotation\Groups;
     use Symfony\Component\Serializer\Annotation\SerializedName;
+    use Symfony\Component\Validator\Constraints as Assert;
 
     /**
      * @ApiResource(
@@ -22,7 +23,8 @@
      *     normalizationContext={"groups"={"cheese_listing:read", "swagger_definition_name"="Read"}},
      *     denormalizationContext={"groups"={"cheese_listing:write", "swagger_definition_name"="Write"}},
      *     attributes={
-     *          "pagination_items_per_page"=10
+     *          "pagination_items_per_page"=10,
+     *          "formats"={"jsonld", "json", "html", "jsonhal", "csv"={"text/csv"}}
      *     }
      * )
      * @ApiFilter(BooleanFilter::class, properties={"isPublished"})
@@ -42,11 +44,17 @@
         /**
          * @ORM\Column(type="string", length=255)
          * @Groups({"cheese_listing:read", "cheese_listing:write"})
+         * @Assert\Length(
+         *     min=2,
+         *     max=50,
+         *     maxMessage="Describe your cheese in 50 chars or less"
+         * )
          */
         private $title;
         /**
          * @ORM\Column(type="text")
          * @Groups({"cheese_listing:read"})
+         * @Assert\NotBlank()
          */
         private $description;
         /**
@@ -58,6 +66,7 @@
         private $price;
         /**
          * @ORM\Column(type="datetime")
+         * @Assert\NotBlank()
          */
         private $createdAt;
         /**
