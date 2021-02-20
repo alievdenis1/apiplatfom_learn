@@ -20,13 +20,13 @@
      *     },
      *     shortName="cheeses",
      *     normalizationContext={"groups"={"cheese_listing:read", "swagger_definition_name"="Read"}},
-     *     denormalizationContext={"groups"={"cheese_listing:write", "swagger_definition_name"="Write"}}
+     *     denormalizationContext={"groups"={"cheese_listing:write", "swagger_definition_name"="Write"}},
      *     attributes={
      *          "pagination_items_per_page"=10
      *     }
      * )
      * @ApiFilter(BooleanFilter::class, properties={"isPublished"})
-     * @ApiFilter(SearchFilter::class, properties={"title": "partial"})
+     * @ApiFilter(SearchFilter::class, properties={"title": "partial", "description": "partial"})
      * @ApiFilter(RangeFilter::class, properties={"price"})
      * @ApiFilter(PropertyFilter::class)
      * @ORM\Entity(repositoryClass="App\Repository\CheeseListingRepository")
@@ -84,7 +84,7 @@
         /**
          * @Groups("cheese_listing:read")
          */
-        public function getShortDescription(): ?string
+        public function getShortDescription(): string
         {
             if (strlen($this->description) < 40) {
                 return $this->description;
